@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Praktikum Pemrograman Web B - Pertemuan 3 (Sederhana)</title>
+  <style>
+    /* Tampilan diperbarui: header gradient, tombol modern, kartu responsif */
+    :root{
+      --bg:#f3f6fb; --card:#ffffff; --muted:#6b7280;
+      --accent:#3b82f6; --accent-2:#7c3aed;
+      --glass: rgba(255,255,255,0.6);
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family:Inter, "Segoe UI", Arial, sans-serif;
+      margin:0; padding:24px;
+      background: linear-gradient(180deg,var(--bg),#eef2ff 60%);
+      color:#0f172a; -webkit-font-smoothing:antialiased;
+    }
+    .container{max-width:980px;margin:0 auto;}
+
+    header{
+      display:flex; align-items:center; gap:16px;
+      padding:18px;border-radius:12px;
+      background: linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#fff; box-shadow:0 6px 20px rgba(59,130,246,0.14);
+    }
+    header h2{margin:0;font-size:20px;letter-spacing:0.2px}
+    header p{margin:0;opacity:0.95;font-size:13px}
+
+    .controls{
+      display:flex;flex-wrap:wrap;gap:10px;margin:18px 0;
+    }
+    .btn{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:8px;border:0;background:#fff;
+      color:#0f172a;cursor:pointer;font-weight:600;box-shadow:0 2px 6px rgba(2,6,23,0.08);
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(2,6,23,0.12)}
+    .btn.ghost{background:transparent;border:1px solid rgba(15,23,42,0.06)}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 8px 22px rgba(99,102,241,0.18)}
+
+    section h3{margin:8px 0 12px 0;color:var(--muted)}
+
+    .cards{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+      gap:14px;
+    }
+    .card{
+      background:var(--card);padding:14px;border-radius:12px;border:1px solid rgba(15,23,42,0.06);
+      box-shadow:0 6px 18px rgba(2,6,23,0.04);
+      position:relative;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease,opacity .18s;
+    }
+    .card:hover{transform:translateY(-6px);box-shadow:0 14px 36px rgba(2,6,23,0.08)}
+    .card .del{
+      position:absolute;right:10px;top:10px;border:0;background:transparent;font-size:18px;color:#ef4444;cursor:pointer;
+    }
+    .card .thumb{
+      height:90px;border-radius:8px;margin-bottom:10px;background:linear-gradient(90deg, rgba(124,58,237,0.12), rgba(59,130,246,0.08));
+      display:flex;align-items:center;justify-content:center;color:rgba(15,23,42,0.5);font-weight:700;
+    }
+    .card h4{margin:0 0 6px 0;font-size:16px}
+    .card p{margin:0;font-size:13px;color:var(--muted)}
+
+    /* Popup */
+    .overlay{
+      display:none;position:fixed;inset:0;background:rgba(2,6,23,0.45);
+      align-items:center;justify-content:center;padding:20px;z-index:60;
+    }
+    .overlay.show{display:flex}
+    .overlay .box{
+      width:100%;max-width:420px;background:linear-gradient(180deg,#fff,#fbfdff);
+      padding:18px;border-radius:12px;box-shadow:0 18px 50px rgba(2,6,23,0.3);
+    }
+    .field{display:flex;flex-direction:column;margin-bottom:12px}
+    label{font-size:13px;margin-bottom:6px;color:#334155}
+    input[type="text"],input[type="email"]{
+      padding:10px 12px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);
+      background:transparent;font-size:14px;outline:none;
+    }
+    .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+
+    footer{margin-top:20px;font-size:13px;color:#64748b;text-align:center}
+
+    /* Dark mode */
+    body.dark{
+      background:linear-gradient(180deg,#071025,#081025 60%);
+      color:#e6eef8;
+    }
+    body.dark header{background:linear-gradient(90deg,#0ea5a1,#7c3aed)}
+    body.dark .card{background:#0b1220;border-color:rgba(255,255,255,0.04);box-shadow:none}
+    body.dark .overlay .box{background:#071026;color:#dbeafe}
+    body.dark input[type="text"],body.dark input[type="email"]{background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.04);color:#cfe6ff}
+    body.dark .btn{color:#e6eef8}
+    @media (max-width:520px){
+      header{flex-direction:column;align-items:flex-start;gap:6px}
+      .controls{justify-content:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h2>Tugas Praktikum</h2>
+        <p style="opacity:0.9;font-size:13px">Latihan: Mode Malam, Tambah/Hapus Card, Popup Form, Pembaca KOM via NIM</p>
+      </div>
+    </header>
+
+    <div class="controls">
+      <button id="toggleDark" class="btn">Mode Malam</button>
+      <button id="addCard" class="btn primary">Tambah Card</button>
+      <button id="openForm" class="btn ghost">Buka Popup Form</button>
+      <button id="readKOM" class="btn">Baca KOM dari NIM</button>
+    </div>
+
+    <section>
+      <h3>Daftar Card</h3>
+      <div id="cards" class="cards">
+        <!-- card akan ditambahkan di sini -->
+      </div>
+    </section>
+
+    <!-- Popup form -->
+    <div id="overlay" class="overlay" aria-hidden="true">
+      <div class="box" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+        <h4 id="formTitle" style="margin:0 0 8px 0">Form Sederhana</h4>
+        <form id="simpleForm">
+          <div class="field">
+            <label for="nama">Nama</label>
+            <input type="text" id="nama" placeholder="Masukkan nama" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="contoh@domain.com" required>
+          </div>
+          <div class="actions">
+            <button type="button" id="closeForm" class="btn ghost">Tutup</button>
+            <button type="submit" class="btn primary">Kirim</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <small>disini tempat kode akan disimpan.</small>
+    </footer>
+  </div>
+
+  <script>
+    // Variabel awal
+    var cardIndex = 0;
+    var cardsEl = document.getElementById('cards');
+
+    // Dark mode: simpan preferensi
+    var toggleBtn = document.getElementById('toggleDark');
+    function applyDark(enabled){
+      document.body.classList.toggle('dark', enabled);
+      toggleBtn.textContent = enabled ? 'Mode Siang' : 'Mode Malam';
+      try{ localStorage.setItem('darkMode', enabled ? '1' : '0'); }catch(e){}
+    }
+    // muat preferensi
+    try{
+      var pref = localStorage.getItem('darkMode');
+      applyDark(pref === '1');
+    }catch(e){ applyDark(false); }
+
+    toggleBtn.addEventListener('click', function () {
+      applyDark(!document.body.classList.contains('dark'));
+    });
+
+    // Tambah card dengan thumbnail sederhana
+    var addCardBtn = document.getElementById('addCard');
+    addCardBtn.addEventListener('click', function () {
+      cardIndex += 1;
+      var card = document.createElement('div');
+      card.className = 'card';
+      var initials = 'C' + cardIndex;
+      // isi card
+      card.innerHTML =
+        '<button class="del" aria-label="Hapus card">×</button>' +
+        '<div class="thumb">' + initials + '</div>' +
+        '<h4>Card #' + cardIndex + '</h4>' +
+        '<p>Ini isi card nomor ' + cardIndex + '.</p>';
+
+      // hapus dengan animasi
+      var delBtn = card.querySelector('.del');
+      delBtn.addEventListener('click', function () {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(8px)';
+        setTimeout(function(){ if(cardsEl.contains(card)) cardsEl.removeChild(card); }, 220);
+      });
+
+      cardsEl.appendChild(card);
+      // scroll ke card baru
+      card.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+
+    // Popup form: buka/tutup, klik luar, ESC
+    var overlay = document.getElementById('overlay');
+    var openForm = document.getElementById('openForm');
+    var closeForm = document.getElementById('closeForm');
+    var simpleForm = document.getElementById('simpleForm');
+
+    function showOverlay(show){
+      overlay.classList.toggle('show', show);
+      overlay.setAttribute('aria-hidden', show ? 'false' : 'true');
+      if(show) document.getElementById('nama').focus();
+    }
+
+    openForm.addEventListener('click', function () { showOverlay(true); });
+    closeForm.addEventListener('click', function () { showOverlay(false); });
+
+    // klik di luar box menutup
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) showOverlay(false);
+    });
+    // ESC
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') showOverlay(false);
+    });
+
+    simpleForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var nama = document.getElementById('nama').value.trim();
+      var email = document.getElementById('email').value.trim();
+      if(!nama || !email){ alert('Isi nama dan email terlebih dahulu.'); return; }
+      alert('Data dikirim:\nNama: ' + nama + '\nEmail: ' + email);
+      showOverlay(false);
+      simpleForm.reset();
+    });
+
+    // Sistem pembaca KOM berdasarkan NIM (sederhana)
+    var readKOM = document.getElementById('readKOM');
+    readKOM.addEventListener('click', function () {
+      var nim = prompt('Masukkan NIM mahasiswa (contoh: 20012345):');
+      if (nim === null) return;
+      nim = nim.trim();
+      if (nim === '') { alert('NIM kosong. Mohon isi NIM.'); return; }
+      if (nim.length < 5) { alert('NIM terlalu pendek.'); return; }
+      if (nim.indexOf('19') === 0) {
+        alert('NIM ' + nim + ' berada di KOM A');
+      } else if (nim.indexOf('20') === 0) {
+        alert('NIM ' + nim + ' berada di KOM B');
+      } else if (nim.indexOf('21') === 0) {
+        alert('NIM ' + nim + ' berada di KOM C');
+      } else {
+        alert('NIM ' + nim + ' tidak terdaftar pada daftar nim mahasiswa usu.');
+      }
+    });
+  </script>
+</body>
+</html>
